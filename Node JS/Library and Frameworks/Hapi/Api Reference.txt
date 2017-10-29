@@ -1,0 +1,7 @@
+Server Properties:
+
+    -> server.app               // Provides a safe place to store server-specific run-time application data without potential conflicts with the framework internals. 
+                                // valiad across all servers(i.e not didtinuished by label)
+    
+    -> server.connections       // An array containing the server's connections. When the server object is returned from server.select().
+                                // then, the connections array only includes the connections matching the selection criteria.

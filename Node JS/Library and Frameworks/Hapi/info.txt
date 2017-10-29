@@ -1,0 +1,240 @@
+Hapi js : 
+
+    -> A rich framework for building applications and services.
+
+    Getting started : 
+
+        Create a server.js file in our application.
+
+    Getting hapi server instance : 
+
+        let server = new hapi.Server();                  
+
+    Establishing Connection : 
+
+        server.connection(obj);     // obj contains port no, host, label etc..
+
+    Creating Route : 
+
+        server.route(obj);          // obj contains contains info like method, path, handler
+
+    Starting Server : 
+
+        server.start(handler);
+
+
+Detailed info : 
+
+Server:
+    -> The Server object is the main application container. The server manages all incoming connections along with all the facilities provided by the framework.
+    -> A server can contain more than one connection (e.g. listen to port 80 and 8080).
+
+Routing : 
+
+    -> 
+
+    Method : 
+
+        -> The method option can be any valid HTTP method, or an array of methods, or even * to accept any method
+
+    Path : 
+
+        -> The path parameter defines the path, though it can contain named parameters. To name a parameter in a path, simply wrap it with {}.
+        -> These parameters are stored in the object request.params.
+        -> We may only have one named parameter per segment of the path. That means that /{filename}.jpg is valid while /{filename}.{ext} is not.
+
+        Optional parameters: 
+            -> In order to make a parameter optional, put a question mark at the end of the parameter's name.
+            -> It is important to be aware that only the last named parameter in a path can be optional.
+
+        Multi-segment parameters: 
+            -> We can also allow parameters that match multiple segments. In order to do this, we use an asterisk and a number.(matches exact no of segments in this case).
+            -> We can also omit the number entirely, and the parameter will match any number of segments available.
+            -> Like the optional parameters, a wildcard parameter (for example /{files*}) may only appear as the last parameter in your path.
+            
+            e.g  path: '/hello/{user*2}' will match "/hello/john/doe"
+
+    handler:
+        -> The handler option is a function that accepts two parameters, request, and reply.
+        -> The handler can also accept an object. (used while serving static files from a directory or a single file)           // lookup documentation for Serving Static Content
+        -> The result of reply is a response object, that can be chained with additional methods to alter the response before it is sent.(i.e response is what that gets sent back).
+    
+    Config: 
+        -> This is where you configure things like validation, authentication, prerequisites, payload processing, and caching options.
+
+    Notes : 
+        -> When determining what handler to use for a particular request, hapi searches paths in order from most specific to least specific.
+        -> By default, a route added to the server object is common to all server connections, unless we specifically select the connection and add the route to it.
+        -> A Route can be anywhere inside of our application using server.route(). i.e openly, inside of a plugin, inside of a callback etc..
+
+Server methods : 
+
+    -> Server methods are a useful way of sharing functions by attaching them to your server object rather than requiring a common module everywhere it is needed.
+
+    Syntax : 
+        server.method('add', add, {});
+            or 
+        server.method({
+            name: 'functionName',                           // 
+            method: actualFunction,
+            options: {}
+        });
+            or 
+        we may also pass an array of above objects
+
+    Name: 
+        -> The name parameter is a string used to retrieve the method from the server later, via server.methods[name]. if we specify a name with a . character, it is registered as a nested object
+           rather than the literal string. i.e server.method('math.add', add); becomes accesible as server.methods.math.add.
+
+    Function: 
+        -> It can take any number of arguments but must accept a callback as its last parameter. The callback accepts three parameters: err, result, and ttl.
+        -> Here, result is the value to return and ttl used to tell hapi how long the return value can be cached; if it is specified as 0 then the value will never be cached.
+
+    Caching, Generate a custom key, Bind:
+        -> refer documentation. 
+
+
+Validation:
+
+    -> hapi allows validation functionality by using the module joi.
+    -> By default, all available validators are set to true which means that no validation will be performed.
+    -> Inside of the validate object, for the params/query/anything, we can value in in three formats, 
+            * exact match
+            * function (value, options, next) 
+            * using Joi module
+    -> We can validate headers, path parameters, query parameters, and payload data etc..
+
+    e.g 
+        config: {
+            validate: {
+                query: {
+                    limit: Joi.number().integer().min(1).max(100).default(10)
+                },
+                params: {
+                    name: Joi.string().min(3).max(10)
+                },
+                headers: {
+
+                },
+                payload: {
+
+                }
+            }
+        }
+    Response Validation: 
+        -> hapi can also validate responses before they are sent back to the client. This validation is defined in the "response" property of the route config object.    
+        -> Output validation is useful for ensuring that your API is serving data that is consistent with its documentation/contract
+        -> hapi supports quite a few options to fine-tune output validation. Here are a few of them:
+            * response.failAction   
+                error: send an Internal Server Error (500) response (default).
+                log: just log the offense and send the response as-is.
+            * response.sample
+                If performance is a concern, hapi can be configured to validate only a percentage of responses. 
+                This can be acheived with the response.sample property of the route config.
+            * response.status
+                Sometimes one endpoint can serve different response objects.(e.g Different for create/update/failure)
+                hapi supports this by allowing you to specify a different validation schema for each response status code. 
+                response.status is an object with keys that are numeric status codes, and properties that are joi schemas:
+            * response.options
+                options to pass to joi during validation. See the API docs for more details.
+
+
+    Notes: 
+        -> By default hapi will not validate anything. If you specify a validator for even one query parameter/payload, 
+           that means you must specify a validator for ALL possible query parameters/payload that you would like to accept.
+
+
+Plugin:
+
+    -> This allows us to very easily break your application up into isolated pieces of business logic, and reusable utilities.
+
+    Creating a plugin:
+        -> They can be used effeciently for seperation of concerns and isolating functionality into a seperate plugin.
+        -> At their core they are an object with a register function that has the signature function (server, options, next). 
+           That register function then has an attributes object attached to it to provide hapi with some additional information about the plugin, such as name and version.
+        -> Additionally, the attributes object may contain the key multiple that when set to true tells hapi that it is safe to register your plugin more than once in the same server.
+        -> The options parameter is simply whatever options the user passes to your plugin. No changes are made and the object is passed directly to your register method.
+        -> next is a method to be called when your plugin has completed whatever steps are necessary for it to be registered. This method accepts only one parameter, err,
+           that should only be defined if an error occurred while registering your plugin.
+        -> The server object is a reference to the server your plugin is being loaded in.
+        -> We can apply plugins and other settings only to specific connections of ther server using the label assigned to the connection and server.select() method.
+
+        Syntax:
+            server.register(plugins, [options], [callback])
+
+        Loading a plugin:
+            -> Plugins can be loaded one at a time, or as a group in an array, by the server.register() method. 
+                e.g server.register({}, handler);                           // IMP - This does not have the register key with it
+                    server.register([{}, {}], handler);    
+            Passing options:
+                -> To pass options to your plugin, we instead create an object with register and options keys. 
+        
+        Passing options(as argument for server.register() used by the hapi framework):
+            -> It allows us to pre-select servers based on one or more labels(instead of doing it before), as well as apply vhost or prefix modifiers to any routes that your plugins register.
+            -> The options object is used by hapi and is not passed to the plugin(s) being loaded.
+            i.e {
+                select: ['webserver', 'admin'],
+                routes: {
+                    prefix: '/plugins'
+                }
+            }
+
+        Notes:
+            -> Instead of name and version seperately, we can send have attributes as {pkg: require('./package.json')}
+
+
+
+Logging:
+
+    -> There are two nearly identical logging methods, server.log, and request.log
+    -> The difference between the two is in what event they emit, what object emits the event, and what data is automatically associated. 
+       The server.log method emits a log event on the server, and has the server's URI associated with it. request.log emits a request event
+       on the server and has the request's internal id associated with it.
+    -> we should look into using a plugin like good or bucker.
+
+Authentication
+
+    -> Authentication within hapi is based on the concept of schemes and strategies.
+    -> Think of a scheme as a general type of auth, like "basic" or "digest".(These and many others are Standard authorization schemes(refer Postman for the list))
+    -> A strategy on the other hand, is a pre-configured and named instance of a scheme.
+    -> At first, we need to register the "hapi-auth-basic" as a plugin. This registers ONLY the "Basic" authentication scheme using "server.auth.scheme()"(Actual name is basic).
+    -> All Startergies must be assocaited with an underlying scheme.(scheme created using server.auth.scheme())
+    -> we can register a stratergy using the command, 
+        server.auth.strategy("custom name", "actual stratergy name", {
+            validateFunc: validatorFunction
+        })
+        validatorFunction (request, email, password, callback)
+            -> callbac (err, isValid, usefulObj)
+        Note: 
+            -> The third param/options inside of server.auth.strategy() is passed directly to the underlying schema of the stratergy.    
+    -> we can then use the stratergy for our route using the property "auth" : "startergyName" inside of the router config obejct.
+    
+    Route Configuration with Authentication:
+        -> Authentication can also be configured on a route, by the config.auth parameter.
+        -> It can be a simple string(stratergy name) or an object with mode, strategies, and payload parameters.
+        -> The mode parameter may be set to 'required', 'optional', or 'try' and works the same as when registering a strategy.
+        -> The payload parameter can be set to false, or required/true or optional. It is only possible to use with a strategy that supports the payload method in its scheme. 
+        -> When specifying one strategy, you may set the strategy property to a string with the name of the strategy. When specifying more than one strategy,
+           the parameter name must be strategies and should be an array of strings each naming a strategy to try.
+        -> The strategies will then be attempted in order until one succeeds, or they have all failed.(i.e Its a succes if even one stratergy is successfully cleared).   
+
+    Notes:
+        
+        -> We can create a schema using the server.auth.scheme().
+        -> Creating a scheme is a copmaritevely complex process.
+        -> we can set default auth using the mode parameter with server.auth.strategy() or server.auth.default().
+           Note that any routes added before server.auth.default() is called will not have the default applied to them. 
+           If you need to make sure that all routes have the default strategy applied, you must either call server.auth.default()
+           before adding any of your routes, or set the default mode when registering the strategy. 
+
+
+Views:
+    -> First we need to register the "vision" plugin for hapi to support view functionality, then we need to register the view engine using server.views().
+        e.g server.views({
+            engines: {
+                html: require("handlebars")
+            },
+            path: "path_to_static_folder"
+        })
+
+// Look into caching, cookies and views(detailed)

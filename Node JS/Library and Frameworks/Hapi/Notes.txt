@@ -1,0 +1,5 @@
+Notes : 
+
+    -> It is generally wise to run code that depends on a plugin within the callback that registers that plugin
+       so that you can be absolutely sure that plugin exists when your code runs.            
+    -> The request payload is the data sent from the client other than the query params.(i.e like form data etc.) and this is not available for GET method.
