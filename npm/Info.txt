@@ -49,3 +49,7 @@ Global modules :
 
 	Note : 
 		-> The Global module is usually independent of the current project.
+
+Running Scripts:
+	-> We can run any pre-configured command in package.json file using the command "npm run <command_name>".(Command name as in package.json file).
+	   we can actually skip the run keyword while executing the standard commands like start, test etc..

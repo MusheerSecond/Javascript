@@ -15,3 +15,4 @@
 
 6 -> We can also create a new module inside of our main module/project(it will have its own package.json file and dependencies)
 
+7 -> we can execute any command using nodemon by using the command "nodemon --exec '<any_command_to_execute>'". This is used while running test scripts through nodemon.

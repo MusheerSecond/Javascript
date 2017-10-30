@@ -1,0 +1,13 @@
+Mocha:
+    -> The test files should be named with the "filename.test.js" format.(used by convention, maybe used as a different extension)
+    -> No need to import mocha inside of our test file since we are going to run our test cases through mocha.(it automatically does the job)
+    -> The test function looks like     
+    Syntax:
+        it("What i am going to do", () => {
+            ...
+        })
+    -> we can run mocha by changing the value of "test" in the scripts property in the package.json file to "mocha **/*.test.js"    
+    -> we can use "npm test" to start running our test cases.
+    -> The function to test should have been exported by the module that contanins it.(don't know how to test function that is not exported)
+    -> A test is considered to be PASSED if it does not throw any error.(no need to do anything else). But, in the async methods, we have to be
+       calling the done method with errors(if any) to specify if the test has passed or not.
