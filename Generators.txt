@@ -1,0 +1,46 @@
+Generator Function:
+    -> Generators are functions which can be exited and later re-entered. Their context (variable bindings) will be saved across re-entrances.
+    -> Calling a generator function does not execute its body immediately. An iterator object(Generator object) for the function is returned instead.
+    -> When the iterator's next() method is called, the generator function's body is executed until the next/first yield expression.
+    -> Each time the generator's next() method is called, the generator resumes execution and runs until it reaches one of the following:
+        
+        * yield
+        * throw                                         // This halts execution of the generator entirely, and execution resumes in the caller
+                                                        // as is normally the case when an exception is thrown.
+        * The end of the generator function is reached  // execution of the generator ENDS and an IteratorResult is returned to the caller in which
+                                                        // the value is undefined and done is true.
+        * return                                        // execution of the generator ENDS and an IteratorResult is returned to the caller
+                                                        // in which the value is the value specified by the return statement and done is true.
+
+    -> The next() method returns an object with a value property containing the yielded value(mostly, expression before yield) and a done property which indicates whether the generator has yielded its last value as a boolean.
+    -> Calling the next() method with an argument will resume the generator function execution, REPLACING the yield statement where execution was paused with the argument from next(). 
+  
+    gen.next()  returns     {value: "some value", done : boolean}       // value decided by expression before yield
+
+    Note:
+        -> The first call of next executes from the start of the function until the first yield statement.
+        -> Generators are not constructable
+
+Yield:
+    -> The yield keyword pauses generator function execution and the value of the expression following the yield keyword is returned to the generator's caller
+    -> It can be thought of as a generator-based version of the return keyword.
+    -> The yield keyword actually returns an IteratorResult object with two properties, value and done. 
+    -> The value property is the result of evaluating the yield expression, and done is false, indicating that the generator function has not fully completed.
+    -> -> yeild can also be used in places which expects a value(passed in by gen.next()). e.g console.log(1, yield);
+
+    Syntax:
+        [rv] = yield [expression];        
+
+Yield*:
+    -> The yield* expression is used to delegate to another generator or iterable object.
+    -> The yield* expression iterates over the operand(anotherGenerator) and yields each value returned by it.
+    -> The value of yield* expression itself is the value returned by that iterator when it's closed (i.e., when done is true).
+    -> Besides generator objects, yield* can also yield other kinds of iterables, e.g. arrays, strings or arguments objects.
+    -> When a yield* expression is found, it DOES NOT STOP there, it goes on till first instance of yield in the referred yield function.
+       And, when when we call next(), when the referenced generator is stopped at its last yield, then from there it goes directly to the 
+       first instacne of yield after the yield* in actual generator function. Thus, behaving as if the yield* is NOT THERE at all.
+    -> But, yield* is an expression, not a statement, so it evaluates to a value.(even though it does not have much significane in pausing functions). 
+       Its value will be what was returned by the referenced generator function.
+    -> "return" inside of referenced generator function, DOES not return that value to the next() method. But, behaves as mentioned above.(It only stops
+       at the first instacne of yield after the yield* in actual generator function).
+       

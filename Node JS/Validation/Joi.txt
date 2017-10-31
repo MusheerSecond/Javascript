@@ -1,0 +1,4 @@
+JOI Info:
+    -> Object schema description language and validator for JavaScript objects.
+    -> joi allows us to create blueprints or schemas for JavaScript objects (an object that stores information) to ensure validation of key information.
+       i.e Schema - Some form of MetaData for an Object proprties.
