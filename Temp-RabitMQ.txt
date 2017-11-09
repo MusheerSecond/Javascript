@@ -1,0 +1,53 @@
+RabbbitMQ:
+    -> RabbitMQ is a message-queueing software called a message broker or queue manager.
+    -> Simply said; It is a software where queues can be defined, applications may connect to the queue and transfer a message onto it.
+    -> It implements the Advanced Message Queuing Protocol(AMQP).
+    -> AMQP standardies messaging by defining Producers, Broker and Consumer.
+    -> This increases loose coupling and scalability.
+
+    -> Publishing a message means the producer sends a message to the exchage and the exchange forwards the message to the queue.
+    -> Consuming means the consumer picks up the message from the queue and consumes it.
+    -> There can be multiple exchanges on a single RabbitMQ Server. But, each exchange can only be of a single type.
+    -> There can be multiple queues connected to an exchange. Now, when the exchange receives a message
+       it can choose which queue(s) to send the message to.
+    -> There can be multiple consumers connected to one single Queue.
+    -> In this case, messages will be sent to the cosumer using the Round-Robin Algorithm.(messages are load balanced between consumers with this)
+    -> An exchage connects to a queue using a binding and a binding key.
+    -> To send a message the producer needs to send a routing key to the exchange.
+
+    -> Fanout exchange simply ignores the routing key and sends the incoming message to all queues.
+    -> Direct exchange sends message to the queues, where the routing key equal to the binding key.
+    -> Topic exchange allows partial matches of keys.(Binding keys can be a wildcard pattern) 
+       Here, * -> 1 WORD and # -> 0 or more WORDS, and a . is used to seperate one word from another.
+    -> Header exchange, uses the message header instead of the routing key.
+    -> In RabbitMQ, there is a special exchange, called "default exchange" which matches the routing key with the 
+       Queue name and not the binding key. RabbitMQ creates this exchange for each queue automatically.
+
+    -> A Produces emits messages to the exchange.
+    -> Consumer recieves message form the queue.
+    -> Binding connects an exchange with the queue using the binding key
+    -> An exchange compares a routing key with binding key.
+    -> Message distribution depends upon the type of the exchange.
+
+    Store and forward Queues:
+        -> The Producer and consumer need not be running at the same time. The Producer can send the message and then disappear. The Consumer can come 
+           at a later time and then dequeue messages from the queue. Thus, the Messages will be stored inside of the queue during the time period and forwarded 
+           to the conumer once it becomes alive.
+
+    Message Flow:
+    -> When the producer sends a message to the extension, the extension sends a confirmation message to the producer.
+    -> When the Consumer receives the message from the extension, it has to ACK(acknowledgement) on this message.
+       Only then the message from the extension will be removed.
+
+    Handling failures:
+        -> Message sent by producer is received by the extension, but the extension could not send back the confirmation
+           to the producer(due to some reason). In this case, there is a possibility, that the producer may send the message
+           to the extension again, resulting in duplicate messages inside of the extension.
+        -> The Consumer(due to some reason) fail to send an ACK on the message. Thus, the extension will send back the same
+           message to the consumer after some time, resulting in "re-delivery". The extension gets around this by actually setting a flag on
+           the messages which are "re-delivered".
+
+
+    Notes:
+        -> Whenever we create a Queue, that queue is always binded to the default exchange using the queue name as the binding key.    
+        -> The Consumer should only acknowledge the message once it has been processed completely.

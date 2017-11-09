@@ -44,3 +44,14 @@ Yield*:
     -> "return" inside of referenced generator function, DOES not return that value to the next() method. But, behaves as mentioned above.(It only stops
        at the first instacne of yield after the yield* in actual generator function).
        
+
+Notes:
+    -> Nodejs Modules like "co" can be used for executing the generator function. i.e call gen.next() with the actual resolved value from the 
+       promise, which was returned by the previous gen.next() instead of calling with the promise itself.
+    
+    ********
+    -> Since co, waits for the promise to resolve and then returns the resolved value, it actually HAS TO wait for the asyc call to end. Thus, at that time(i.e before calling the gen.next() with 
+       the resolved promise value), other code outside of the co-generator function can be EXECUTING(CO RETURNS A PROMISE EVEN BEFORE IT IS EVEN COMPLETE, thus the outside function starts executing).
+       (In normal case of yield, this is not the case because, the return of yield will be synchrounous returning some value or just returning some promise WITHOUT RESOLVING).
+    -> Thus, in the context of co, yielding is a MUST to actually PAUSE the function till the asyn is complete.
+    -> If an error or Promise is rejected before yield inside of co function, then an error is thrown.
