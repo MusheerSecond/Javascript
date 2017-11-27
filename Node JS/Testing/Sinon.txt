@@ -1,0 +1,17 @@
+SPY:
+  -> A test spy is a function that records arguments, return value, the value of this and exception thrown (if any) for all its calls.
+  -> It is just a spy, nothing more.
+  -> Types:
+      -> Some are anonymous functions(e.g callback function.)
+      -> Some wrap methods that already exist in the system under test.
+
+
+Spy on anonymous functions:
+  -> When the behavior of the spied-on function is not under test, we can use an anonymous function spy. (i.e we create a spy and pass it in place of a callback)
+  -> The spy won’t do anything except record information about its calls.
+
+Using a spy to wrap an existing method:
+  -> The spy will behave exactly like the original method (including when used as a constructor), but you will have access to data about all calls. 
+
+Syntax:
+  ->     

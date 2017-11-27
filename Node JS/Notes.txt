@@ -2,7 +2,7 @@
 
 2 -> A Simple Node application does not need to have a package(having package.json file).
 
-3 -> All the code we write in any node js file is actually wrapped inside of a function with parameters such as exports, module, require and other params. This is what prevents the code from actually poluting the global environment.
+3 -> All the code we write in any node js file is actually wrapped inside of a function with parameters such as exports, module, require and other params. This is what prevents the code from actually polluting the global environment.
      This is also the reason why we get access to variables like module, exports, require etc. in each and every file. Also, at the end of that function, node "returns" the module.exports object which will be available in places where it is required.
      Actual wrapper function : 
         function (exports, require, module, __filename, __dirname) {}
