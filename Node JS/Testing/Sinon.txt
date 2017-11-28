@@ -14,4 +14,28 @@ Using a spy to wrap an existing method:
   -> The spy will behave exactly like the original method (including when used as a constructor), but you will have access to data about all calls. 
 
 Syntax:
-  ->     
+  * var spy = sinon.spy()
+      -> Creates an anonymous function that records arguments, this value, exceptions and return values for all calls.
+  * var spy = sinon.spy(myActualFunc);
+      -> Spies on the provided function
+      -> This can be spied on any number of times.(a reference Spy variable MUST be used to access info about its specific calls)
+      -> We are not required to restore the function after usage. (i.e The Original function is still available if accessed directly)
+  * var spy = sinon.spy(object, "method")
+      -> Creates a spy for object.method and replaces the original method with the spy. (i.e Hereafter wherever we call this function 
+         ANYWHERE(using the currently used object), this spy is going to be executed)(i.e The original method becomes inaccessible after spying it until restored)
+      -> An exception is thrown if the property is not already a function.
+      -> The original method can be restored by calling object.method.restore().
+      -> sinon spy properties can be accessed on the spied method(as long as it is spied).
+      -> The returned spy is the function object which replaced the original method. spy === object.method.
+      -> The reference to the returned spy function is not necessary.(Obj.method can also be used for accessing this spy)
+    Notes:
+      -> Spying in on an already spied on method(same object) throws an error.(There can be only one obj.method spy, only happens in this case)
+      -> If we call same method on different objects of same class, then the spy is not going to work.
+
+Notes:
+  -> We should spy or stub in on a function based on how it is called.
+      e.g let myFunc = myObj.fun. Now if we call myFunc and create a spy using myObj.fun. It is not going to work.
+  
+Api Notes:
+  -> spy.calledWith(arg1, ..) is preferred instead of being specific.
+  -> spy.args[0][0] and spy.getCall(0).args[0]. They are both the same.

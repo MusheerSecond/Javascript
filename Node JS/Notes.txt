@@ -18,3 +18,5 @@
 7 -> we can execute any command using nodemon by using the command "nodemon --exec '<any_command_to_execute>'". This is used while running test scripts through nodemon.
 
 8 -> To guard against crashing the Node.js process, a listener can be registered on the process object's uncaughtException event. i.e process.on('uncaughtException', (err) => {});
+
+9 -> If we require an already required module, then the exact same object is returned(file/module is not re-executed)
