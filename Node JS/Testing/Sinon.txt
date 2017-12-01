@@ -24,7 +24,7 @@ Syntax:
       -> Creates a spy for object.method and replaces the original method with the spy. (i.e Hereafter wherever we call this function 
          ANYWHERE(using the currently used object), this spy is going to be executed)(i.e The original method becomes inaccessible after spying it until restored)
       -> An exception is thrown if the property is not already a function.
-      -> The original method can be restored by calling object.method.restore().
+      -> The original method can be restored by calling object.method.restore() or spy.restore().
       -> sinon spy properties can be accessed on the spied method(as long as it is spied).
       -> The returned spy is the function object which replaced the original method. spy === object.method.
       -> The reference to the returned spy function is not necessary.(Obj.method can also be used for accessing this spy)
@@ -32,10 +32,37 @@ Syntax:
       -> Spying in on an already spied on method(same object) throws an error.(There can be only one obj.method spy, only happens in this case)
       -> If we call same method on different objects of same class, then the spy is not going to work.
 
+Stub:
+  -> Stubs are functions (spies) with pre-programmed behavior.
+  -> As spies, stubs can be either anonymous, or wrap existing functions(behaves same as in spy). When wrapping an existing function with a stub,
+     the original function is not called.
+  -> The original method can be restored by calling object.method.restore() or stub.restore().
+  -> If the stub functionality is not defined, then it does nothing and returns undefined. But, stub.callThrough(), causes the original method
+     wrapped into the stub to be called when none of the conditional stubs are matched.
+  -> 
+
+  Use a stub when you want to:
+    -> Control a method’s behavior from a test to force the code down a specific path. Examples include 
+       forcing a method to throw an error in order to test error handling.
+    -> When you want to prevent a specific method from being called directly (possibly because it triggers undesired behavior,
+       such as a XMLHttpRequest or similar).
+
+  Notes:
+    -> They support the full test spy API in addition to methods which can be used to alter the stub’s behavior.
+    -> Calling behavior defining methods like returns or throws multiple times overrides the behavior of the stub.(only one can be used on a stub)
+    -> But, we can use the onCall method to make a stub respond differently on consecutive calls.(e.g stub.onCall(0).returns(1))
+    -> If we want to create a stub object of MyConstructor, but don’t want the constructor to be invoked, use this utility function.
+       let stub = sinon.createStubInstance(MyConstructor)
+    
+
+
 Notes:
-  -> We should spy or stub in on a function based on how it is called.
+  -> We should spy or stub in on a function ONLY based on how it is called.(but the object used should be same when it is called)
       e.g let myFunc = myObj.fun. Now if we call myFunc and create a spy using myObj.fun. It is not going to work.
   
 Api Notes:
   -> spy.calledWith(arg1, ..) is preferred instead of being specific.
   -> spy.args[0][0] and spy.getCall(0).args[0]. They are both the same.
+  -> spy/stub.withArgs() is not to be used for which methods are to be spied/stubbed. It is used for filtering the spy/stub calls and
+     specifying the behavior(more specifically) in case of stub.
+  -> stub.onCall(n), can also be used to more specifically define the behavior in terms of call count.
