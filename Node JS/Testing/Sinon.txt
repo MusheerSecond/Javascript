@@ -39,7 +39,7 @@ Stub:
   -> The original method can be restored by calling object.method.restore() or stub.restore().
   -> If the stub functionality is not defined, then it does nothing and returns undefined. But, stub.callThrough(), causes the original method
      wrapped into the stub to be called when none of the conditional stubs are matched.
-  -> 
+  -> Variables can also be stubbed. we can use get/set/value on that property.
 
   Use a stub when you want to:
     -> Control a method’s behavior from a test to force the code down a specific path. Examples include 
@@ -53,8 +53,14 @@ Stub:
     -> But, we can use the onCall method to make a stub respond differently on consecutive calls.(e.g stub.onCall(0).returns(1))
     -> If we want to create a stub object of MyConstructor, but don’t want the constructor to be invoked, use this utility function.
        let stub = sinon.createStubInstance(MyConstructor)
+    -> stub.callsArg(index, context), Causes the stub to call the argument at the provided index as a callback function, with given context. 
     
+Mocks:
+  -> Mocks (and mock expectations) are fake methods (like spies) with pre-programmed behavior (like stubs) as well as pre-programmed expectations.
+  -> Mocks should only be used for the method under test. (i.e we should have no more than one mock (possibly with several expectations) in a single test.)
 
+Sandboxes:
+  -> Sandboxes removes the need to keep track of every fake created, which greatly simplifies cleanup.
 
 Notes:
   -> We should spy or stub in on a function ONLY based on how it is called.(but the object used should be same when it is called)
