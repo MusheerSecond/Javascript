@@ -1,0 +1,27 @@
+(outside insert mode)
+
+:w - save
+:wq - save and quit
+:q! - discard changes and quit
+
+w - front of next word
+b - front of previous word(backword)
+0 - begining of line
+$ - end of the line
+G - last line
+A - to the end of file and in insert mode(append mode)
+:set number - show line number
+:syntax on - activate syntax highlight
+:set tabstop=2 - to configure tab space  as 2
+:set autoindent
+
+V - select lines/text(using arrow keys)
+D - delete current line/selected text(select by V)
+
+
+
+Note:
+  -> we can set these configurations by default, by saving them inside of the .vimrc file inside of the root folder.
+  -> using `: echo $MYVIMRC`, we can see which .vimrc file the current fiel is using.
+
+  

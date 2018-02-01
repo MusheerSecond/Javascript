@@ -65,10 +65,13 @@ Sandboxes:
 Notes:
   -> We should spy or stub in on a function ONLY based on how it is called.(but the object used should be same when it is called)
       e.g let myFunc = myObj.fun. Now if we call myFunc and create a spy using myObj.fun. It is not going to work.
-  
+      // A slight exception is, if the property is a property of a prototype, 
+      // try diff obj of same class, stubbed on one method(method here will the property of a class.prototype property)	  
+
 Api Notes:
   -> spy.calledWith(arg1, ..) is preferred instead of being specific.
   -> spy.args[0][0] and spy.getCall(0).args[0]. They are both the same.
   -> spy/stub.withArgs() is not to be used for which methods are to be spied/stubbed. It is used for filtering the spy/stub calls and
      specifying the behavior(more specifically) in case of stub.
   -> stub.onCall(n), can also be used to more specifically define the behavior in terms of call count.
+  -> If a function returns a promise, we cannot get the resolved value for that promise from the spied/stubbed method.

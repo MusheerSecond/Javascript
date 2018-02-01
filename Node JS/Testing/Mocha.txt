@@ -8,6 +8,15 @@ Mocha:
         })
     -> we can run mocha by changing the value of "test" in the scripts property in the package.json file to "mocha **/*.test.js"    
     -> we can use "npm test" to start running our test cases.
-    -> The function to test should have been exported by the module that contanins it.(don't know how to test function that is not exported)
+    -> The function to test should have been exported by the module that contains it.(don't know how to test function that is not exported)
     -> A test is considered to be PASSED if it does not throw any error.(no need to do anything else). But, in the async methods, we have to be
        calling the done method with errors(if any) to specify if the test has passed or not.
+    -> Alternately, instead of using the done() callback, you may return a Promise. This is useful if the APIs
+       we are testing return promises instead of taking callbacks.
+    -> Mocha provides the hooks before(), after(), beforeEach(), and afterEach(). These should be used to set up preconditions and clean up after your tests.
+
+  Notes:
+    -> If done is called with some value, the the test is considered to be failed.(That value has to be the failure message)
+    -> Returning a Promise and calling done() will result in an exception
+    -> Using arrow functions is not advised if we need to use the mocha context inside of our function.
+    -> We can also be using nodemon to run mocha using the command ”nodemon —-exec \”mocha **/*.js\”” or just “nodemon —-exec \”npm test\””(if “npm test” is configured to run mocha)

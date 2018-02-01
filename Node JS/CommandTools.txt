@@ -1,5 +1,5 @@
 Command Line Arguments : 
-	-> We can acces this from the process object(process.argv)
+	-> We can access this from the process object(process.argv)
 	-> The process.argv is an array. It also contains some unnecessary items in the array.
 	-> We can also get the values using a third party module called Yargs. This can save us some time with parsing.
 
